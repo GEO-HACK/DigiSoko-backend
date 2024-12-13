@@ -65,4 +65,18 @@ def product_details(request, id):
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)   
     elif request.method == 'DELETE':
         products.delete()
-        return Response(status = status.HTTP_204_NO_CONTENT)        
+        return Response(status = status.HTTP_204_NO_CONTENT)  
+
+
+@api_view (['GET'])
+def related_products(request, category_name):
+    try:
+        # fetch products by category
+        related_products = Products.objects.filter(Type__name__iexact= category_name)
+        serializer = ProductSerializer(related_products, many= True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)    
+
+
